@@ -1,0 +1,29 @@
+<!DOCTYPE html> 
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<script language=JavaScript src=tr2.js></script>
+<textarea id="t1" cols=200 rows=15>
+ `0to translit`
+</textarea>
+<textarea id="t2" cols=200 rows=15>
+ Это рус текст + english text + снова рус и цифры 12689
+</textarea>
+
+<hr>
+<input id="b1" type="button" value="tr2->rus" onclick="f1();">
+<input id="b2" type="button" value="rus->tr2" onclick="f2();">
+</input>
+
+<script language=JavaScript>
+function f1(){
+ var s=document.all.t1.value;
+ s=tr2u(s);
+ document.all.t2.value=s;
+}
+function f2(){
+ var s=document.all.t2.value;
+ s=rus2tr2(s);
+ document.all.t1.value=s;
+}
+
+</script>
