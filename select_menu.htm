@@ -1,0 +1,189 @@
+<meta charset="utf8">
+
+<style>
+ #id_select1,#id_select2,#id_select3 {float:left}
+ #id_select2,#id_select3 {margin-left:10%}
+ #id_filter_01,#id_filter_02,#id_filter_03{width:180px}
+ #id_select_01,#id_select_02,#id_select_03{width:200px}
+ button {width:20px;padding:0 0 0 0}
+ #but1{width:50px;height:30px;border:solid coral 1px;float:right}
+</style>
+
+<div id="id_select1">
+<input type="text" id="id_filter_01"  onclick="this.value='';filter_selected(1)">
+<button onclick="list_next(2)" > &gt; </button>
+<br>
+<select id="id_select_01" size=10  onclick="list_selected(1)">
+</select>
+</div>
+
+<div id="id_select2" >
+<input type="text" id="id_filter_02" onclick="this.value='';filter_selected(2)">
+<button onclick="list_next(3)" > &gt; </button>
+<br>
+<select id="id_select_02" size=10  onclick="list_selected(2)">
+</select>
+</div>
+
+<div id="id_select3" >
+<input type="text" id="id_filter_03" onclick="this.value='';filter_selected(3)">
+<button onclick="ok_end()" > &gt; </button>
+<br>
+<select id="id_select_03" size=10  onclick="list_selected(3)">
+</select>
+</div>
+
+<button id="but1" onclick='if(gLang=="ru"){gLang="en"; this.innerText="en"} else {gLang="ru"; this.innerText="ru"}'>ru</button>
+<div style="clear:both">
+Выбиралка из меню, подменю, уровней до 100.<br>
+сделано через файлы как js-скрипты.BOM можно<br>
+список в UTF8, обычный текст в формате ниже.<br>
+ид|текст|подсказка<br>
+при выборе ищет файл с именем list2_ru_id1.js<br>
+где 2- номер уровня, ru/en -язык id1-краткое назв. файла без пробелов и спец. симв.<br>
+работает фильтр по списку, частые лучше вверх списка-быстрее выбор.<br>
+</div>
+
+<script>
+	gLang='ru';
+	gList1='\n';	gList2='\n'; gList3='\n';
+	gFlagError=0;
+maxList=3;
+	
+function addTag2(vParTag=window.document.body,vNameTag='div'){
+	var tag0=window.document.createElement(vNameTag);
+	try{vParTag.appendChild(tag0);return tag0;}
+	catch(e){alert('ERROR addTag='+e);}
+}
+
+function findTag(vSelector,vNum=0){var r='';
+	if(vSelector==null || vSelector==undefined || vSelector=='' || typeof(vSelector)!='string')return r;
+	try{r=window.document.querySelectorAll(vSelector)[vNum]} catch(e){};if(r==undefined)r='';return r;
+}
+function show_obj(o){
+ window.console.log(o);
+}
+
+function run_js(pathScript,call_back,arg){
+ var script = document.createElement('script');
+ script.src = pathScript;
+ window.document.head.appendChild(script);//запуск немедленно
+ script.onerror = function() {gFlagError=1;}//alert('error load js');
+ script.onload =  function() {
+  if (!this.executed) { // выполнится только один раз
+   this.executed = true;
+   //alert("Загрузка внешнего скрипта завершена:")
+   gFlagError=0;
+   setTimeout(call_back,0,arg);
+  }
+ }
+
+ script.onreadystatechange = function() {
+ var self = this;
+  if (this.readyState == "complete" || this.readyState == "loaded") {
+   setTimeout(function() { self.onload() }, 0);// сохранить "this" для onload
+  }
+ }
+}
+
+function left_simv(s,n=1){if(n==0)return ''; var s0=''+s;return s0.substring(0,n);}//символы слева
+function end_simv(s,n=1){var s0=''+s;return s0.substring(s0.length-n,s0.length);}//символы справа
+
+function list_selected(numList){
+ var f=window.document.querySelector('#id_filter_0'+numList);	
+ var z=window.document.querySelector('#id_select_0'+numList);
+ f.value='';
+ var k=z.options.selectedIndex;
+ if(k>=0){f.value=z.options[k].text; f.style.backgroundColor='bisque';}
+ for(var i=numList+1;i<=maxList;i++)clear_list(i)
+} 
+
+function list_next(n){
+ var k=n-1;	
+ var f=window.document.querySelector('#id_filter_0'+k);	
+ var z=window.document.querySelector('#id_select_0'+k);
+ k=z.options.selectedIndex;
+ if(k>=0){
+   f.value=z.options[k].text; f.style.backgroundColor='lightgreen';
+  for(var i=n;i<=maxList;i++)clear_list(i)
+  run_js('list'+n+'_'+gLang+'_'+z.options[k].value+'.js',fill_list,n);
+ }
+} 
+
+
+function filter_selected(numList){
+ var f=window.document.querySelector('#id_filter_0'+numList);	
+ var z=window.document.querySelector('#id_select_0'+numList);
+ f.style.backgroundColor='';
+  var o=z.options;
+ o.length=0; //clear list
+ fill_list(numList);
+}
+
+function clear_list(numList){
+ var f=window.document.querySelector('#id_filter_0'+numList);	
+ var z=window.document.querySelector('#id_select_0'+numList);
+ f.style.backgroundColor=''; f.value='';
+  var o=z.options; o.length=0; //clear list
+  this['gList'+numList]='';
+}
+
+function fill_list(numList=1){
+ var i,t,m,z,fi,f,oo; //alert(gLevel)
+ f=window.document.querySelector('#id_filter_0'+numList);
+ f.focus();
+ z=window.document.querySelector('#id_select_0'+numList);
+ f.onkeydown=test_key;
+ z.onkeydown=test_key;
+ m=this['gList'+numList].split('\n');
+ 
+ fi=f.value;	
+ for(i=0;i<m.length;i++){
+  t=m[i]+'||'; t=t.split('|');
+  if(t[0]!='')if(fi==t[1].substring(0,fi.length)){ 
+    oo=addTag2(z,'option');oo.value=t[0]; oo.text=t[1]; oo.title=t[2];
+  }
+  if(i>20)break; //for fast
+ }
+ if(z.options.length==1){
+	 z.options.selectedIndex=0;f.value=oo.text;
+ }
+}
+
+function test_key(e){
+	var s=e.target.id;
+	var w=left_simv(s,9)
+	var k=parseInt(end_simv(s)); 
+	if(e.keyCode==13){list_next(k+1);return;}
+	if(e.keyCode==9){
+		if(w=='id_select')list_next(k+1);
+		else {window.document.querySelector('#id_select_0'+k).focus();return false};
+		return;
+	} 
+ if(w=='id_select')setTimeout(list_selected,100,k);
+ if(w=='id_filter')setTimeout(filter_selected,100,k)
+}
+
+function ok_end(){
+ var k=maxList;	
+ var f=window.document.querySelector('#id_filter_0'+k);	
+ var z=window.document.querySelector('#id_select_0'+k);
+ k=z.options.selectedIndex;
+ if(k>=0){
+   f.value=z.options[k].text; f.style.backgroundColor='lightgreen';
+   d1=addTag2();
+  
+   s=''
+   for(var i=1;i<=maxList;i++)s=s+'<hr>'+window.document.querySelector('#id_filter_0'+i).value;
+   d1.innerHTML= s+'</p>'
+ }
+} 
+
+
+for(var i=1;i<=maxList;i++)clear_list(i);
+run_js('list1_'+gLang+'.js',fill_list,1);
+
+
+
+
+</script>
