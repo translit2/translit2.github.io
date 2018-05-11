@@ -66,9 +66,10 @@ function show_obj(o){
 
 function run_js(pathScript,call_back,arg){
  var script = document.createElement('script');
+ gFlagError=1;
  script.src = pathScript;
  window.document.head.appendChild(script);//запуск немедленно
- script.onerror = function() {gFlagError=1;}//alert('error load js');
+ script.onerror = function() {alert('нет файла списка: error load js');}
  script.onload =  function() {
   if (!this.executed) { // выполнится только один раз
    this.executed = true;
@@ -107,6 +108,7 @@ function list_next(n){
    f.value=z.options[k].text; f.style.backgroundColor='lightgreen';
   for(var i=n;i<=maxList;i++)clear_list(i)
   run_js('list'+n+'_'+gLang+'_'+z.options[k].value+'.js',fill_list,n);
+  
  }
 } 
 
@@ -130,12 +132,14 @@ function clear_list(numList){
 
 function fill_list(numList=1){
  var i,t,m,z,fi,f,oo; //alert(gLevel)
+ var u=this['gList'+numList];
+ if(gFlagError>0 || u==''){alert('список испорчен или не тот формат');return -1;}
  f=window.document.querySelector('#id_filter_0'+numList);
  f.focus();
  z=window.document.querySelector('#id_select_0'+numList);
  f.onkeydown=test_key;
  z.onkeydown=test_key;
- m=this['gList'+numList].split('\n');
+ m=u.split('\n');
  
  fi=f.value;	
  for(i=0;i<m.length;i++){
