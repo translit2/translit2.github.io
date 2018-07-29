@@ -1,0 +1,295 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>demo</title>
+<script src="xing_lib.js"></script>
+
+<script>
+//глобальные флаги для логики
+if(window['gPathJS'])alert('err global vars gPathJS') //проверка на использование
+gPathJS=''; //путь к спискам или апи
+el_b1=0;el_b2=0; //кнопки
+//настройки для мульти-языка
+dict_en_en='';    //словари есть
+dict_en_ru='';    //словари есть
+g_mode=1; //1+ тек номер задачи-крутить по кругу. 0-выполнять с первого и удалять из очереди
+g_task=[]; //очередь задач для загрузки скриптов как ифрейм/картинка.
+g_rez=''; //переменная с ответом как строка utf-8
+id_user_page='123456789899000-9866444';//id сайта -тематика и клиент сервиса.
+
+multi_lang={
+ path_dict:'', // отн. путь к словарям или урл
+ lang_all:'en,ru',  
+ lang_oporn:'en',   //язык опорный - при нем сохр и восст поля
+ label:1,  
+ help_text:1,
+ flag:0, // value:1, title:1, placeholder:1,
+ url:'' //онлайн переводчик
+}
+mOporLang=[] // значения полей опорного языка.
+
+
+</script>
+
+<style>
+.dve_but{position:fixed;bottom:1%;right:3%;height:20%;}
+.dve_but button{margin-top:10px;font-size:20px;font-weight:bold; height:35%;width:100%;}
+
+.dve_but button, #id_but_multi_lang {
+    display: block;
+    padding: 5px 10px;
+    border: 1px solid #BBB;
+    background: linear-gradient(to bottom, #FFF 0%, #E5E5E5 100%) repeat scroll 0% 0% transparent;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.52);
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+.dve_but button:hover{background:#D0FFFF;}
+
+label:hover{color: red;}
+#id_pole1,#id_pole2,#id_pole5{width:100%;}
+[id^="bubu"]:hover{color:green}
+#id_rus_lat:hover{color:red}
+</style>
+</head>
+
+<body>
+<br>
+<h2 class="multiLangText">2) УКАЖИТЕ ДЕТАЛИ ПОСТАВЩИКА ТОВАРА</h2>
+<div style="float:left;width:48%;margin-left:1%;border:1px solid coral;padding: 1% 1% 1% 1%">
+<p class="multiLangAny">
+Демонстрация фреймворка multilang.<br>
+переводит статич. страницы без редиректов и сервера с Php/итд<br>
+словари фраз хранятся в скриптах как строка-таблица в виде<br>
+слово1|перевод1\n<br>
+слово2|перевод2\n<br>
+фраза слов|перевод слов\n<br>
+Произвольный текст переводится онлайн переводчиком гугл.<br>
+
+для его настройки перейдите на script.google.ru<br>
+жмете новый проект:<br>
+function doGet(e) {<br>
+  var url = decodeURIComponent(e.parameter.url);<br>
+  try { var response = UrlFetchApp.fetch(url); } catch (e) { return e.toString();  }<br>
+  var type = response.getHeaders()['Content-Type'];<br>
+  var b64 = Utilities.base64Encode(response.getContent());<br>
+  var data = 'data:'+type+';base64,'+b64;<br>
+  return ContentService.createTextOutput(data);<br>
+}<br>
+через меню сверху публикуете как веб-приложение для всех.<br>
+ссылку урл вставляете в настройки в шапке в muli_lang.url<br>
+интерфейс содержит ограниченное для данного сайта кол-во слов/фраз<br>
+и перевод через скрипт который грузится с любого места в интернете.<br>
+скрипт это обычный список слов. перем="список слов и перевод";<br>
+произвольный текст должен быть в теге с классом **Any<br>
+он переводися через гугл переводчик по url=вставляете свой.<br>
+ставится на стр за 1 минуту. кол-во языков неограничено.<br>
+просто меняете ru на другой и перевод слов.<br>
+-------------------------------------------------------------------<br>
+Движок рекламный банер.<br>
+общий принцип: не секретно-выполняем в  браузере скриптом.<br>
+секретно-на сервере php/python-django/GS/GAE<br>
+защита от дурака и простого взлома- просто шифруем урл в бейс64 <br>
+Если домен адблок забанит, то надо регить новый или сам вебмастер на пхп
+должен загрузить скрипт, сохр в файл и вставить в страницу. лок ссылку как
+на свою обычную картинку/скрипт.<br>
+
+Тип рекламы html/jpg/gif(anim)/mp4 (с svg есть проблемы).<br>
+Тема рекламы выбирается по ид-сайта/страницы, размер по данным от юзера-
+экран, тип устройства и браузера.<br>
+
+При отключенных скриптах будет текстовая реклама-бегущая строка.<br>
+Оптимально - набор гифок -каждая гифка это банер. смена слайд-шой через 3 сек
+по кругу пока есть в БД рекламные предложения на эту тему.<br>
+Если ифрейм уходит из зоны видимости то слайд-шоу и загрузка останавливается.<br>
+Видео нужно будет с ютюба/и подобных грузить вместе с проигрывателем,
+там выбор качества и размера свой есть. хотя можно свой сделать потом..<br>
+
+Работает так: в ифрейм хозяин сайта вставляет ссылку на сервис с параметром
+ид-сайта, желаемый размер и тип банера(сервис собирает данные юзера и
+сам по таблице определяет размер и тип, шифрует в бейс64 и отдает скриптом.<br>
+Скрипт грузится асинхронно в фоне и выполняется в ифрейме.<br>
+Он грузит первую картинку всегда, остальные если прошло 3 сек и в зоне видимости.<br>
+
+пока недоделано. зона видимости не сделана.<br>
+скрипты перед запуском надо чистить старые.<br>
+в html только абс. урл, отн. не катят-нет опорного домена.<br>
+слайдер надо сделать и на свап и стрелки<br>
+<p>
+</div>
+
+<div style="float:right;width:44%;margin-right:1%;border:1px solid coral;padding: 1% 1% 1% 1%">
+
+  <div>
+    <a>2.1)</a> <label>НАЗВАНИЕ КОМПАНИИ</label><br />
+   <textarea cols="45" rows="2" max="15" name="nazv_komp" id="id_pole1"></textarea>  
+  </div>
+
+  <div>
+   <a>2.2)</a> <label>АДРЕС КОМПАНИИ</label><br />
+   <textarea cols="45" rows="2" max="15" name="adr_komp" id="id_pole2"></textarea>  
+  </div>
+
+  <div>
+   <a>2.3)</a> <label>ТЕЛЕФОН КОМПАНИИ</label>__
+  <input type="text" name="tel_komp" id="id_pole3" value="" />  
+  </div>
+
+  <div>
+   <a>2.4)</a> <label>ФАКС КОМПАНИИ</label>_____.
+ <input type="text" name="fax_komp" id="id_pole4" value="" />  
+  </div>
+
+  <div id="p25">
+   <a>2.5)</a> <label>ОТВЕТСТВЕННАЯ ПЕРСОНА ЗА ПЕРЕДАЧУ ТОВАРА</label><br />
+   <input type="text" name="otv_pers" id="id_pole5" value="" title="B1:6,9,12"/>  
+  </div>
+
+  <div id="p26">
+   <a>2.6)</a> <label>СОТОВЫЙ ТЕЛЕФОН ЭТОЙ ПЕРСОНЫ</label>
+   <input type="text" name="tel_pers" id="id_pole6" value="" title="B1:6,9,12" />  
+  </div>
+
+  <div id="p27">
+   <a>2.7)</a> <label>НОМЕР НА КОТОРЫЙ ССЫЛАТЬСЯ</label>
+   <input type="text" name="nom_ssyl" id="id_pole7" value="" />  
+  </div>
+<hr>
+
+<iframe id="id_reklama_001" style="width:90%;height:90px;margin-left:5%"></iframe>
+
+</div>
+
+
+<div class="dve_but">
+ <button id="id_b1" onclick="bukvo_select()" class="multiLangText"> MENU </button> 
+ <button id="id_b2" onclick="bukvo_select()" class="multiLangText"> SUBMIT </button>
+</div>
+																	
+																		
+
+
+<script src="multi_lang.js"></script>																		
+
+<script>
+//no +' загрузка из кеша
+'use strict'
+var po1,po2,po3,po4,po5,po6,po7;
+
+
+function load_fromLocSt(){var m,s,i;
+if(window['xing_lib_loaded']==undefined)alert('err xing_lib');
+log('ок. загрузили либу, инициализация..');
+}
+
+
+
+function bukvo_select(s){var n,o,i,j,e,k,t;
+if(!s)s='A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|-|BA|CA|CH|MA|MO|SA|ST|rus';
+//ko1.options.length=2;
+//ko1.options[0].text=''
+//ko1.options[1].text='---'
+//ko1.options.selectedIndex=0;
+s=s.split('|');
+k=find_xy(D.body); 
+n=0;
+e=add_tag2();
+e.style='position:fixed;top:5%;width:90%;height:85%;background:wheat;padding: 1%;border: 5px solid black;';
+for(i=0;i<5;i++){
+ for(j=0;j<7;j++){
+  o=add_tag2(e,'button');
+  o.id="bubu";
+  o.style='width: 14%;height: 14%;font-size: 30pt;'
+  t=s[n++];if(t=='*')t='SH';
+  o.innerHTML=t;
+  o.onclick=function(){var t=''+this.innerHTML; 
+   if(t=='-')t='---';
+   //ko1.options[0].text=t;
+   setTimeout(function(){ko1.onchange();},100)
+   this.parentElement.remove();
+  }
+
+  if(i==3 && j==5)o.title="NONE";
+ }
+ add_tag2(e,'hr');
+}
+o.id="id_rus_lat";
+o.onclick=function(){
+ var e=this,i,t='А|Б|В|Г|Д|Е|Ё|Ж|З|И|Й|К|Л|М|Н|О|П|Р|C|Т|У|Ф|Х|Ц|Ч|Ш|Щ|Ъ|Ы|Ь|Э|Ю|Я|-';
+ t=t.split('|');t.reverse();  this.innerHTML='lat';
+ for(i=0;i<len(t);i++)e=prev_el(e,'button'),e.innerHTML=t[i];
+} 
+
+}
+//основной движок загрузчика вместо ajax+json
+//грузит как скритп из ЛЮБОГО URL в фоне, клгда загрузит то исполнит ф-ю.
+var run_js_FlagError; //global var
+function run_js(vPathScript,vFuncEnd,arg){var sc;
+ run_js_FlagError=1;
+ setTimeout(function(){
+  if(run_js_FlagError){console.log('error in run_js!!');//next_task();
+  }
+ },5000);
+ sc=D.createElement('script');
+ sc.src=''+vPathScript; 
+ if(D.head){D.head.appendChild(sc);}//запуск немедленно
+ else{D.scripts[0].appendChild(sc);}
+ sc.onerror=function(){console.log('no file='+vPathScript+': error in run_js');//next_task();
+ }
+ sc.onload=function(){
+  if(!this.executed){
+   this.executed=true;
+   run_js_FlagError=0;
+   if(vFuncEnd)setTimeout(vFuncEnd,0,arg);
+  }
+ }
+ sc.onreadystatechange=function(){var self=this;
+     if(this.readyState == "complete" || this.readyState == "loaded"){
+       setTimeout(function(){self.onload()}, 0);
+     }
+ }
+}
+
+function next_task(){
+ if(g_mode==0){g_task.shift();if(len(g_task)>0)eval(g_task[0]);}
+ else{g_mode+=1;if(g_mode>len(g_task))g_mode=1;eval(g_task[g_mode-1]);}
+}
+
+function utf8_to_bytes(t){var b,hi,lo,w,i,ss='';
+ for(i=0;i<len(t);i++){
+  b=t.charCodeAt(i);
+  if(b<256){ss+=t[i];}
+  else {
+   w=window.encodeURIComponent(b) //%D1%8F
+   hi=parseInt(w.substring(1,3),16);
+   lo=parseInt(w.substring(4),16);
+   ss+=String.fromCharCode(hi,lo);
+  }
+ }
+ return ss;
+}
+
+function ok1(v){
+console.log(g_mode);
+// alert(g_rez)
+if(v==1){g_rez='<meta charset="utf-8"><img src="'+g_rez+'"></img>';} 
+// g_rez=utf8_to_bytes(g_rez);
+ if(g_rez)gb_id('id_reklama_001').src="data:text/html;base64,"+btoa(g_rez);
+ setTimeout(function(){next_task();},5000);
+}
+//---start---
+//это кодируем и даем как ифрейм вебмастеру
+//берем данные юзера - экран, юзер агент, итд.
+//по таблице ищем тематику рекламы, по данным юзера - формат.
+//делаем список задач для слайдера рекламы.
+g_task.push("run_js('banners/banner_htm_1111.js',ok1,0)");//0=html+img+video
+g_task.push("run_js('banners/banner_htm_2222.js',ok1,0)");
+g_task.push("run_js('banners/banner_img_3333.js',ok1,1)");//1=только картинка
+next_task();
+
+window.onload=load_fromLocSt;
+</script>
+</body>
