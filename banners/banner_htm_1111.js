@@ -4,8 +4,21 @@
 body{background:red}
 </style>
 123456<br>
-333333 img/video tut
-<img src="data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAQAQAAAAAAAAAAAAAAAAAAAAAAAAAAAD/NTU1/z8/P/89PT3/Pj4+/z4+Pv8+Pj7/Pj4+/z4+Pv8+Pj7/Pj4+/z4+Pv89PT3/Pz8//zU1Nf8AAAD/AAAA/6Ghof+YmJj/ioqK/42Njf+NjY3/jY2N/42Njf+NjY3/jY2N/42Njf+NjY3/ioqK/5iYmP+hoaH/AAAA/wAAAP+dnZ3/hISE/3R0dP94eHj/eHh4/3h4eP94eHj/eHh4/3h4eP94eHj/eHh4/3R0dP+EhIT/nZ2d/wAAAP8AAAD/qKio/5OTk/+CgoL/hoaG/4aGhv+Ghob/hoaG/4aGhv+Ghob/hoaG/4aGhv+CgoL/k5OT/6ioqP8AAAD/AAAA/6+vr/+ampr/iYmJ/42Njf+NjY3/jY2N/42Njf+NjY3/jY2N/42Njf+NjY3/iYmJ/5qamv+vr6//AAAA/wAAAP+1tbX/oqKi/5GRkf+VlZX/lZWV/5WVlf+VlZX/lZWV/5WVlf+VlZX/lZWV/5GRkf+ioqL/tbW1/wAAAP8CAgL/vb29/6mpqf+Xl5f/m5ub/5ubm/+bm5v/m5ub/5ubm/+bm5v/m5ub/5ubm/+Xl5f/qamp/729vf8CAgL/AAAA/8PDw/+xsbH/n5+f/6Ojo/+jo6P/o6Oj/6Ojo/+jo6P/o6Oj/6Ojo/+jo6P/n5+f/7Gxsf/Dw8P/AAAA/zo6Ov/Pz8//xMTE/7a2tv+5ubn/ubm5/7m5uf+5ubn/ubm5/7m5uf+5ubn/ubm5/7a2tv/ExMT/z8/P/zo6Ov9aWlr/2dnZ/9PT0//Jycn/ysrK/8rKyv/Kysr/ysrK/8rKyv/Kysr/ysrK/8rKyv/Jycn/09PT/9nZ2f9aWlr/U1NT/9/f3//a2tr/z8/P/9HR0f/R0dH/0dHR/9HR0f/R0dH/0dHR/9HR0f/R0dH/z8/P/9ra2v/f39//U1NT/1RUVP/m5ub/4+Pj/9jY2P/a2tr/2tra/9ra2v/a2tr/2tra/9ra2v/a2tr/2tra/9jY2P/j4+P/5ubm/1RUVP9UVFT/7u7u/+3t7f/i4uL/5OTk/+Tk5P/k5OT/5OTk/+Tk5P/k5OT/5OTk/+Tk5P/i4uL/7e3t/+7u7v9UVFT/VFRU/+/v7//y8vL/5+fn/+np6f/p6en/6enp/+np6f/p6en/6enp/+np6f/p6en/5+fn//Ly8v/v7+//VFRU/1RUVP/8/Pz//////////////////////////////////////////////////////////////////Pz8/1RUVP9WVlb/kJCQ/5WVlf+VlZX/lpaW/5aWlv+Wlpb/lpaW/5aWlv+Wlpb/lpaW/5aWlv+VlZX/lZWV/5CQkP9WVlb/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==">
+купите ***<br>
+тут картинка/видео<br>
+
+333333 img/video tut<br>
+<img id="id_img" src="data:image/png;base64,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">
 </img>
 <hr>
+<script>
+var g_m=0;
+function test1(){
+ //console.log('1111='+g_m);
+ g_m=g_m+5;
+ id_img.style.marginLeft=g_m+"px";
+ setTimeout(function(){test1();},100);
+}
+this.onload=test1;
+</script>
 `;

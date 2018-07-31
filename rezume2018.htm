@@ -3,8 +3,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <pre>
 свежее резюме. май 2018г
-имя для удаленной работы: Artur Plugin 30+ РФ   
-связь скайп:xing.polar, телеграм:@ArturPlugin
+имя для удаленной работы: Artur Plugin 30+ РФ
+связь скайп:xing.polar, телеграм:@Artur_Plugin, емайл  ArturPlugin на маилру 
 
 Образование: Техн. универ. Цифр техника и микроконтроллеры. 2е высш. переводчик с англ.(незаконченое)
 
@@ -15,6 +15,53 @@ https://geekbrains.ru/users/740859
 есть сертификаты онлайн тестов. Опыт 10+ лет с перерывами. Примеры/демо, на новом сайте translit2.github.io
 Последняя разработка - своя библиотека и хит сезона: replace_all(скорость замены близка к варианту с рег.выр. но с ЛЮБЫМИ символами.)
 а в гугле предлагают варианты которые медленннее в 500 раз по тестам. вот так :)
+<style> 
+ #id1{background-color:lightgreen;height:30px;width:30%;overflow-x:hidden;overflow-y:auto;}
+ #id1:hover{height:500px;width:100%;background-color:magenta}
+</style>
+<div id="id1">
+==развернуть исходник кода==
+<code>
+//длина вечно путаю lenght length и на питоне есть такая+длина словарей
+len=function(v){var r,x;
+ if(v===undefined)return 0;
+ if(typeof(v)=='number')return len(''+v);
+ r=v.length; if(r)return r;
+ if(typeof(v)=='object'){r=0;for(x in v)r++;return r;}
+ return 0; //не знаю что это
+}
+
+tabl2dic=function(m){var s,r={},i,mm=m.split('\n')
+ for (i in mm)if(mm[i]){s=mm[i].replace('\r','')+'|';s=s.split('|');r[s[0]]=s[1];}
+ return r;
+}
+
+//заменяет все, а не один! и цифры тоже! а в гугле на каком то сайте с 10 вариантами
+//самый быстрый работает в 500 раз медледнее т.к циклов много или рекурсий!
+//+замена по таблице а не 100 писать replace
+function replace_all(s,a,b){var k1,k2=0,i,s0=''+s,a0=''+a,b0=''+b,ss='',le=len(a);
+if(b===undefined){
+ if(typeof(a)=='string')b=tabl2dic(a);
+ for(i in b)s0=replace_all(s0,i,b[i]);
+ return s0;
+}
+ for(i=0;i&lt;len(s0);i++){
+  k1=s0.indexOf(a0,k2);if(k1&lt;0)break;
+  ss=ss+s0.substring(k2,k1)+b0;
+  k2=k1+le; //***aa^
+ }
+ ss=ss+s0.substring(k2);
+ return ss;
+}
+//test
+var m=`
+поиск1|-замена1-
+поиск2|-замена2-
+[^"($/]|-замена3-
+`;
+var s=replace_all('123поиск1456поиск2789поиск2[^"($/]',m)
+</code>
+</div>
 Вёрстка бутонами для вертикального выравнивания блоков в блоках для любых браузеров без костылей. (button=div)
 юзер-скрипт библитека для firefox iMacros, автоходилка и автокликалка по сайтам.
 

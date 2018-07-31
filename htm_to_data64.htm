@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+<textarea id="id_htm" cols=90 rows=10></textarea><br>
+<button onclick="da()">pusk</button><br>
+<textarea id="id_text" cols=90 rows=10></textarea>
+<div id="id_div"></div>
+<script>
+hex2=function(d){var h='0123456789ABCDEF'; return ''+h.charAt(d>>4)+h.charAt(d&15);}
+function one_simv_to_bytes_utf8(s,flag_hex2){var w,k,b1,b2;
+ k=s.charCodeAt(0);
+ if(k<128){if(flag_hex2)return hex2(k)+'-';else return s;}//>
+ w=window.window.encodeURI(s); //%D1%8F  =else
+ b1=w.substring(1,3);
+ b2=w.substring(4,6);
+ if(flag_hex2)return b1+'-'+b2+'-';
+ return String.fromCharCode(parseInt(b1,16),parseInt(b2,16));
+}
+function str_to_bytes_utf8(s,flag_hex2){var x,ss='';
+ for(x in s)ss+=one_simv_to_bytes_utf8(s.charAt(x),flag_hex2);
+ return ss;
+}
+
+var D=window.document;
+var h=`
+<!DOCTYPE html>
+<html>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+`;
+h='window.document.charset="UTF-8";\n';
+h='';
+function da(){
+ var htm1=D.getElementById('id_htm');
+ var t=str_to_bytes_utf8(htm1.value);
+ t='data:text/html;base64,'+btoa(t);
+ D.getElementById('id_text').value=t;
+ D.getElementById('id_div').innerHTML='<iFraMe src="'+t+'"><iframe>';
+}
+</script>
+
+

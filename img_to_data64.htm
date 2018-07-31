@@ -1,0 +1,29 @@
+<meta charset=utf-8>
+<img id="id_img" src="">
+<input id="id_url" type="file" value="http://domen/path/file.ext">
+<button onclick="da()">pusk</button><br>
+<textarea id="id_text" cols=90 rows=10></textarea>
+<div id="id_div"></div>
+<script>
+var D=window.document;
+var img1=D.getElementById('id_img');
+img1.onload=function(){
+  var t=getBase64Image(img1);
+  D.getElementById('id_text').value=t;
+  var img2=D.createElement('img');
+  img2.src=t;
+  D.getElementById('id_div').appendChild(img2);
+}
+
+getBase64Image=function(img){var canvas,ctx,dataURL;
+    canvas=D.createElement("canvas");
+    canvas.width=img.width;  canvas.height=img.height;
+    ctx=canvas.getContext("2d");   ctx.drawImage(img, 0, 0);
+    dataURL=canvas.toDataURL("image/gif", 1);//data:image/png;base64,
+    //dataURL=dataURL.replace(/^data:image\/(png|jpg|jpeg);base64,/, "");
+    return dataURL;
+}
+function da(){ img1.src=''+D.getElementById('id_url').value;}
+</script>
+
+

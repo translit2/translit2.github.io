@@ -20,11 +20,11 @@ set_default=function(v,t){if(v==U)return t;return v;}
 
 //длина вечно путаю lenght length и на питоне есть такая
 len=function(v){var r,x;
- if(is_null(v))return 0;
- if(is_num(v))return len(''+v); 
- r=v.length; if(r!=U)return r;
- if(is_obj(v)){r=0;for(x in v)r++;return r;}
- return -1; //не знаю что это
+ if(v===undefined)return 0;
+ if(typeof(v)=='number')return len(''+v);
+ r=v.length; if(r || r===0)return r;
+ if(typeof(v)=='object'){r=0;for(x in v)r++;return r;}
+ return 0; //не знаю что это
 }
 
 one_simv=function(s,vStart){return s.charAt(vStart);}
@@ -178,22 +178,16 @@ randomInt=function(vMin, vMax){var k;
  return k;
 }
 //dec->hex 00-FF
-hex2=function(d){var h,lo,hi;
- h='0123456789ABCDEF';
- lo=d%16; hi=(d-lo)/16;
- return ''+h.charAt(hi)+h.charAt(lo);
+hex2=function(d){var h='0123456789ABCDEF'; 
+ return ''+h.charAt(d>>4)+h.charAt(d&15);
 }
 //заменяет все, а не один! и цифры тоже
-replace_old=function(s,a,b){var s0=''+s, a0=''+a, b0=''+b;
- if(inStr(a0,'+'))alert('err replace_all +');
- if(inStr(a0,'.'))alert('err replace_all .');
- if(inStr(a0,'['))alert('err replace_all [');
- if(inStr(a0,']'))alert('err replace_all ]');
- if(inStr(a0,'-'))alert('err replace_all -');
- return s0.replace(RegExp(a0, "g" ), b0);
-}
-
 replace_all=function(s,a,b){var k1,k2=0,i,s0=''+s,a0=''+a,b0=''+b,ss='',le=len(a0);
+if(b===undefined){
+ if(typeof(a)=='string')b=tabl2dic(a);
+ for(i in b)s0=replace_all(s0,i,b[i]);
+ return s0;
+}
  for(i=0;i<len(s0);i++){
   k1=s0.indexOf(a0,k2);if(k1<0)break;
   ss=ss+s0.substring(k2,k1)+b0;
@@ -754,6 +748,22 @@ on_top=function(o){var z,b=find_xy(o);
  o.style.zIndex=z+1;
 } 
 no_cash=function(){return '?no_cash='+Math.random((new Date()).getUTCMilliseconds())}
+
+tabl2dic=function(m){var s,r={},i,mm=m.split('\n')
+ for (i in mm)if(mm[i]){s=mm[i].replace('\r','')+'|';s=s.split('|');r[s[0]]=s[1];}
+ return r;
+}
+
+simv2bytes=function(s,flag_hex2){var w,k,b1,b2;
+ k=s.charCodeAt(0);
+ if(k<128){if(flag_hex2)return hex2(k)+'-';else return s;}
+ w=window.window.encodeURI(s); //%D1%8F  =else
+ b1=w.substring(1,3);
+ b2=w.substring(4,6);
+ if(flag_hex2)return b1+'-'+b2+'-';
+ return String.fromCharCode(parseInt(b1,16),parseInt(b2,16));
+}
+
 //setTimeOut=setTimeout;
 //typeOf=typeof;
 xing_lib_loaded=get_timer(); //ver 1

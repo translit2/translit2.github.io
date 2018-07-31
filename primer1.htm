@@ -71,28 +71,28 @@ label:hover{color: red;}
 
 для его настройки перейдите на script.google.ru<br>
 жмете новый проект:<br>
-function doGet(e) {<br>
-  var url = decodeURIComponent(e.parameter.url);<br>
-  try { var response = UrlFetchApp.fetch(url); } catch (e) { return e.toString();  }<br>
-  var type = response.getHeaders()['Content-Type'];<br>
-  var b64 = Utilities.base64Encode(response.getContent());<br>
-  var data = 'data:'+type+';base64,'+b64;<br>
-  return ContentService.createTextOutput(data);<br>
-}<br>
+<code>
+function doGet(e){var r='err',t=ContentService.MimeType.JAVASCRIPT;
+ if(e)if(e.parameter)if(e.parameter.txt)r=LanguageApp.translate(e.parameter.txt, "en", "ru");
+ return ContentService.createTextOutput('w_perevod=`'+r+'`').setMimeType(t);
+}
+</code>
 через меню сверху публикуете как веб-приложение для всех.<br>
 ссылку урл вставляете в настройки в шапке в muli_lang.url<br>
 интерфейс содержит ограниченное для данного сайта кол-во слов/фраз<br>
-и перевод через скрипт который грузится с любого места в интернете.<br>
-скрипт это обычный список слов. перем="список слов и перевод";<br>
-произвольный текст должен быть в теге с классом **Any<br>
-он переводися через гугл переводчик по url=вставляете свой.<br>
-ставится на стр за 1 минуту. кол-во языков неограничено.<br>
+и перевод через таблицу как скрипт, который грузится с любого места в интернете.<br>
+Скрипт это обычный список слов. Перем="слово|перевод";<br>
+Произвольный текст должен быть в теге с классом **Any<br>
+он переводися через гугл переводчик по url=вставляете свой адрес.<br>
+Ставится на страницу за 1 минуту. кол-во языков неограничено.<br>
 просто меняете ru на другой и перевод слов.<br>
+левый клик смена анго-рус. правый клик-меню-и выбор языка там.
+<hr>
 -------------------------------------------------------------------<br>
 Движок рекламный банер.<br>
 общий принцип: не секретно-выполняем в  браузере скриптом.<br>
 секретно-на сервере php/python-django/GS/GAE<br>
-защита от дурака и простого взлома- просто шифруем урл в бейс64 <br>
+защита от простого взлома- просто шифруем урл в бейс64 <br>
 Если домен адблок забанит, то надо регить новый или сам вебмастер на пхп
 должен загрузить скрипт, сохр в файл и вставить в страницу. лок ссылку как
 на свою обычную картинку/скрипт.<br>
@@ -115,9 +115,27 @@ function doGet(e) {<br>
 Он грузит первую картинку всегда, остальные если прошло 3 сек и в зоне видимости.<br>
 
 пока недоделано. зона видимости не сделана.<br>
-скрипты перед запуском надо чистить старые.<br>
 в html только абс. урл, отн. не катят-нет опорного домена.<br>
 слайдер надо сделать и на свап и стрелки<br>
+использование урл_скрипта?url=урл_страницы<br>
+возвращает скрипт с глоб.переменной img_64<br>
+исходник для гугл-скрипта: (но лучше на своем сервере+статистику добавить)<br>
+<code>
+function doGet(e) {<br>
+ var url = e.parameter.url;<br>
+ var t=ContentService.MimeType.JAVASCRIPT;<br>
+ if(url){<br>
+  try {<br>
+    url=decodeURIComponent(url);<br>
+    var response = UrlFetchApp.fetch(url);<br>
+    var type = response.getHeaders()['Content-Type'];<br>
+    var b64 = Utilities.base64Encode(response.getContent());<br>
+    var r = 'data:'+type+';base64,'+b64;r='img_64=`'+r+'`'<br>
+  } catch(e){r='alert(`'+url+'\n'+e.toString()+'`);';}<br>
+  return ContentService.createTextOutput().setContent(r).setMimeType(t);<br>
+ }
+</code>
+<br>
 <p>
 </div>
 
@@ -159,7 +177,7 @@ function doGet(e) {<br>
   </div>
 <hr>
 
-<iframe id="id_reklama_001" style="width:90%;height:90px;margin-left:5%"></iframe>
+<iframe id="id_reklama_001" style="width:90%;height:190px;margin-left:5%"></iframe>
 
 </div>
 
@@ -168,11 +186,9 @@ function doGet(e) {<br>
  <button id="id_b1" onclick="bukvo_select()" class="multiLangText"> MENU </button> 
  <button id="id_b2" onclick="bukvo_select()" class="multiLangText"> SUBMIT </button>
 </div>
-																	
-																		
 
 
-<script src="multi_lang.js"></script>																		
+<script src="multi_lang.js"></script>
 
 <script>
 //no +' загрузка из кеша
@@ -182,7 +198,7 @@ var po1,po2,po3,po4,po5,po6,po7;
 
 function load_fromLocSt(){var m,s,i;
 if(window['xing_lib_loaded']==undefined)alert('err xing_lib');
-log('ок. загрузили либу, инициализация..');
+//log('ок. загрузили либу, инициализация..');
 }
 
 
@@ -225,15 +241,20 @@ o.onclick=function(){
 
 }
 //основной движок загрузчика вместо ajax+json
-//грузит как скритп из ЛЮБОГО URL в фоне, клгда загрузит то исполнит ф-ю.
+//грузит как скритп из ЛЮБОГО URL в фоне, когда загрузит то исполнит ф-ю.
 var run_js_FlagError; //global var
+var g_timer; //global var
+
 function run_js(vPathScript,vFuncEnd,arg){var sc;
  run_js_FlagError=1;
- setTimeout(function(){
+ g_timer=setTimeout(function(){
   if(run_js_FlagError){console.log('error in run_js!!');//next_task();
   }
  },5000);
+ var e=gb_id('id_s753294336503');//старый удаляем.
+ if(e)e.remove();
  sc=D.createElement('script');
+ sc.id='id_s753294336503';
  sc.src=''+vPathScript; 
  if(D.head){D.head.appendChild(sc);}//запуск немедленно
  else{D.scripts[0].appendChild(sc);}
@@ -243,7 +264,8 @@ function run_js(vPathScript,vFuncEnd,arg){var sc;
   if(!this.executed){
    this.executed=true;
    run_js_FlagError=0;
-   if(vFuncEnd)setTimeout(vFuncEnd,0,arg);
+   g_timer=0; //остановить таймер ошибки.
+   if(vFuncEnd)setTimeout(vFuncEnd,0,arg); //если есть колбэк ф-я то выполнить
   }
  }
  sc.onreadystatechange=function(){var self=this;
@@ -258,25 +280,30 @@ function next_task(){
  else{g_mode+=1;if(g_mode>len(g_task))g_mode=1;eval(g_task[g_mode-1]);}
 }
 
-function utf8_to_bytes(t){var b,hi,lo,w,i,ss='';
- for(i=0;i<len(t);i++){
-  b=t.charCodeAt(i);
-  if(b<256){ss+=t[i];}
-  else {
-   w=window.encodeURIComponent(b) //%D1%8F
-   hi=parseInt(w.substring(1,3),16);
-   lo=parseInt(w.substring(4),16);
-   ss+=String.fromCharCode(hi,lo);
-  }
- }
+
+hex2=function(d){var h='0123456789ABCDEF'; return ''+h.charAt(d>>4)+h.charAt(d&15);}
+function one_simv_to_bytes_utf8(s,flag_hex2){var w,k,b1,b2;
+ k=s.charCodeAt(0);
+ if(k<128){if(flag_hex2)return hex2(k)+'-';else return s;}//>
+ w=window.window.encodeURI(s); //%D1%8F  =else
+ b1=w.substring(1,3);
+ b2=w.substring(4,6);
+ if(flag_hex2)return b1+'-'+b2+'-';
+ return String.fromCharCode(parseInt(b1,16),parseInt(b2,16));
+}
+function str_to_bytes_utf8(s,flag_hex2){var x,ss='';
+ for(x in s)ss+=one_simv_to_bytes_utf8(s.charAt(x),flag_hex2);
  return ss;
 }
 
 function ok1(v){
 console.log(g_mode);
 // alert(g_rez)
-if(v==1){g_rez='<meta charset="utf-8"><img src="'+g_rez+'"></img>';} 
-// g_rez=utf8_to_bytes(g_rez);
+if(v==1){g_rez='<meta charset="utf-8"><img width=100% height=100% src="'+g_rez+'"></img>';} 
+//если грузим открыто страницу-рекламу по урл то готовим ее. 
+//но вообще по апи приходит cразу то что надо. (через гугл скрипты (gs) пока что)
+ g_rez=str_to_bytes_utf8(g_rez);
+
  if(g_rez)gb_id('id_reklama_001').src="data:text/html;base64,"+btoa(g_rez);
  setTimeout(function(){next_task();},5000);
 }
